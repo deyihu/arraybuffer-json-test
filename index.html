@@ -34,7 +34,7 @@
         const worker = new Worker('./worker.js');
         worker.addEventListener('message', (event) => {
             if (event.data instanceof ArrayBuffer) {
-                const time = 'arrayBuffer2Json';
+                const time = 'arrayBuffer2Json in main thread';
                 console.time(time);
                 //arraybuffer to json in main thread
                 const typeArray = new Uint8Array(event.data);

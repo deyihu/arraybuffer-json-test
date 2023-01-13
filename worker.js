@@ -13,7 +13,7 @@ function arrayBuffer2Json(typeArray) {
 }
 
 function testWorkerStructuredClone(json) {
-    const time = 'test Worker StructuredClone';
+    const time = 'test StructuredClone form worker';
     console.time(time);
     postMessage(json);
     console.timeEnd(time);
