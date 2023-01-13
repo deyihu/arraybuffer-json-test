@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>arrayBuffer to json test</title>
+    <style type="text/css">
+
+    </style>
+</head>
+
+<body>
+    arrayBuffer to json test
+    <script>
+
+        // const encoder = new TextEncoder();
+        const decoder = new TextDecoder();
+
+        // function copyObj(obj) {
+        //     if (structuredClone) {
+        //         return structuredClone(obj);
+        //     }
+        //     return JSON.parse(JSON.stringify(obj));
+        // }
+
+        // function json2ArrayBuffer(obj) {
+        //     return encoder.encode(JSON.stringify(obj));
+        // }
+
+        function arrayBuffer2Json(typeArray) {
+            const text = decoder.decode(typeArray);
+            return JSON.parse(text);
+        }
+
+        const worker = new Worker('./worker.js');
+        worker.addEventListener('message', (event) => {
+            if (event.data instanceof ArrayBuffer) {
+                const time = 'arrayBuffer2Json';
+                console.time(time);
+                //arraybuffer to json in main thread
+                const typeArray = new Uint8Array(event.data);
+                const json = arrayBuffer2Json(typeArray);
+                console.timeEnd(time);
+                console.log(json);
+            } else {
+                console.log(event.data);
+            }
+        });
+
+        const href = window.location.href;
+        //这里以geojson文件作为测试，真实的场景是一个pbf文件,是无法直接json请求的
+        const url = href.substring(0, href.lastIndexOf('/')) + '/china.geojson';
+        // const url = 'https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full';
+        function init() {
+            worker.postMessage({ url, type: 'arraybuffer' });
+            setTimeout(() => {
+                worker.postMessage({ url, type: '' });
+            }, 2000);
+        }
+        init();
+
+    </script>
+</body>
+
+</html>
